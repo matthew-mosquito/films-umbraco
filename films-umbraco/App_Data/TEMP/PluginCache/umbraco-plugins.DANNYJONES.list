@@ -927,3 +927,6 @@ Umbraco.Web.HealthCheck.Checks.Security.HttpsCheck, umbraco, Version=1.0.7009.26
 Umbraco.Web.HealthCheck.Checks.Services.Tls12Check, umbraco, Version=1.0.7009.26206, Culture=neutral, PublicKeyToken=null
 Umbraco.Web.HealthCheck.Checks.Services.SmtpCheck, umbraco, Version=1.0.7009.26206, Culture=neutral, PublicKeyToken=null
 
+Umbraco.Core.Deploy.IServiceConnector
+
+
