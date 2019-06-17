@@ -1,36 +1,58 @@
 ﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = null;
+}
 
+<!-- All of the films -->
 @{
     var selection = Model.Content.Site().FirstChild("pageContent").FirstChild("filmSection").Children()
                         .Where(x => x.IsVisible());
 }
 
+<!-- Search field and submit button-->
+<div class="mb-2">
+    <form action="@Model.Content.Url" method="get">
+        <input type="text" placeholder="Search" id="query" name="query" />
+        <button class="btn btn-primary">Search</button>
+    </form>
+</div>
 
-<table class="table">
-    <tr>
-        <th>
-            Name
-        </th>
-        <th>
-            Rating
-        </th>
-        <th>
-            Duration
-        </th>
-    </tr>
-
-    @foreach (var item in selection)
-    {
+<!-- Table displaying the results of the search, if there is no search, display all films-->
+@{
+    <table class="table mt-2">
         <tr>
-            <td>
-                @item.Name
-            </td>
-            <td>
-                @item.GetPropertyValue("rating")
-            </td>
-            <td>
-                @item.GetPropertyValue("duration")
-            </td>
+            <th>Name</th>
+            <th>Rating</th>
+            <th>Duration</th>
         </tr>
-    }
-</table>
+
+        @if (!string.IsNullOrEmpty(Request.QueryString["query"]))
+        {
+            foreach (var result in Umbraco.TypedSearch(Request.QueryString["query"]))
+            {
+                foreach (var item in selection)
+                {
+                    if (result.Name == item.Name)
+                    {
+                        <tr>
+                            <td>@item.GetPropertyValue("filmName")</td>
+                            <td>@item.GetPropertyValue("rating")</td>
+                            <td>@item.GetPropertyValue("duration")</td>
+                        </tr>
+                    }
+                }
+            }
+        }
+        else
+        {
+            foreach (var item in selection)
+            {
+                <tr>
+                    <td> @item.GetPropertyValue("filmName") </td>
+                    <td> @item.GetPropertyValue("rating") </td>
+                    <td> @item.GetPropertyValue("duration") </td>
+                </tr>
+            }
+        }
+    </table>
+}
