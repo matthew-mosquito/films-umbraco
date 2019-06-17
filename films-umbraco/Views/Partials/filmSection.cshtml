@@ -1,0 +1,46 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+
+
+
+@{
+    var selection = Model.Content.Site().FirstChild("pageContent").FirstChild("filmSection").Children()
+                        .Where(x => x.IsVisible());
+}
+<ul>
+    @foreach (var item in selection)
+    {
+        <li>
+            <p>@item.Name</p>
+        </li>
+    }
+</ul>
+
+
+<table class="table">
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Rating
+        </th>
+        <th>
+            Duration
+        </th>
+    </tr>
+
+    @foreach (var item in selection)
+    {
+        <tr>
+            <td>
+                @item.GetPropertyValue("filmName")
+            </td>
+            <td>
+                @item.GetPropertyValue("rating")
+            </td>
+            <td>
+                @item.GetPropertyValue("duration")
+            </td>
+        </tr>
+    }
+</table>
