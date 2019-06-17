@@ -1774,16 +1774,16 @@
     <Content Include="Umbraco_Client\DateTimePicker\Images\ui-icons_999999_256x240.png" />
     <Content Include="Umbraco_Client\DateTimePicker\timepicker.js" />
     <Content Include="Umbraco_Client\DateTimePicker\umbDateTimePicker.js" />
-    <Content Include="Umbraco_Client\Dialogs\AssignDomain2.css" />
-    <Content Include="Umbraco_Client\Dialogs\AssignDomain2.js" />
-    <Content Include="Umbraco_Client\Dialogs\CreateDialog.css" />
-    <Content Include="Umbraco_Client\Dialogs\EditMacro.css" />
-    <Content Include="Umbraco_Client\Dialogs\EditMacro.js" />
-    <Content Include="Umbraco_Client\Dialogs\PublishDialog.css" />
-    <Content Include="Umbraco_Client\Dialogs\PublishDialog.js" />
-    <Content Include="Umbraco_Client\Dialogs\SortDialog.css" />
-    <Content Include="Umbraco_Client\Dialogs\SortDialog.js" />
-    <Content Include="Umbraco_Client\Dialogs\UmbracoField.js" />
+    <Content Include="Umbraco_Client\DateTimePicker\Dialogs\AssignDomain2.css" />
+    <Content Include="Umbraco_Client\DateTimePicker\Dialogs\AssignDomain2.js" />
+    <Content Include="Umbraco_Client\DateTimePicker\Dialogs\CreateDialog.css" />
+    <Content Include="Umbraco_Client\DateTimePicker\Dialogs\EditMacro.css" />
+    <Content Include="Umbraco_Client\DateTimePicker\Dialogs\EditMacro.js" />
+    <Content Include="Umbraco_Client\DateTimePicker\Dialogs\PublishDialog.css" />
+    <Content Include="Umbraco_Client\DateTimePicker\Dialogs\PublishDialog.js" />
+    <Content Include="Umbraco_Client\DateTimePicker\Dialogs\SortDialog.css" />
+    <Content Include="Umbraco_Client\DateTimePicker\Dialogs\SortDialog.js" />
+    <Content Include="Umbraco_Client\DateTimePicker\Dialogs\UmbracoField.js" />
     <Content Include="Umbraco_Client\Editors\DirectoryBrowser.css" />
     <Content Include="Umbraco_Client\Editors\EditMacro.css" />
     <Content Include="Umbraco_Client\Editors\EditStyleSheet.js" />
@@ -2139,7 +2139,10 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Controllers\" />
     <Folder Include="obj\Debug\TempPE\" />
+    <Folder Include="Views\homePage\" />
+    <Folder Include="Views\Home\" />
     <Folder Include="Views\MacroPartials\" />
   </ItemGroup>
   <ItemGroup>
