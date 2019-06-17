@@ -6,15 +6,6 @@
     var selection = Model.Content.Site().FirstChild("pageContent").FirstChild("filmSection").Children()
                         .Where(x => x.IsVisible());
 }
-<ul>
-    @foreach (var item in selection)
-    {
-        <li>
-            <p>@item.Name</p>
-        </li>
-    }
-</ul>
-
 
 <table class="table">
     <tr>
@@ -33,7 +24,7 @@
     {
         <tr>
             <td>
-                @item.GetPropertyValue("filmName")
+                @item.Name
             </td>
             <td>
                 @item.GetPropertyValue("rating")
