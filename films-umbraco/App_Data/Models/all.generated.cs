@@ -8,8 +8,8 @@ using  Umbraco.Web;
 using  Umbraco.ModelsBuilder;
 using  Umbraco.ModelsBuilder.Umbraco;
 [assembly: PureLiveAssembly]
-[assembly:ModelsBuilderAssembly(PureLive = true, SourceHash = "2504e6dcf33628de")]
-[assembly:System.Reflection.AssemblyVersion("0.0.0.1")]
+[assembly:ModelsBuilderAssembly(PureLive = true, SourceHash = "b2e9a808425f79fe")]
+[assembly:System.Reflection.AssemblyVersion("0.0.0.2")]
 
 
 // FILE: models.generated.cs
@@ -77,10 +77,10 @@ namespace Umbraco.Web.PublishedContentModels
 		///<summary>
 		/// Name
 		///</summary>
-		[ImplementPropertyType("filmList")]
-		public string FilmList
+		[ImplementPropertyType("filmName")]
+		public string FilmName
 		{
-			get { return this.GetPropertyValue<string>("filmList"); }
+			get { return this.GetPropertyValue<string>("filmName"); }
 		}
 
 		///<summary>
