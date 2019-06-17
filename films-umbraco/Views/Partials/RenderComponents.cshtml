@@ -1,0 +1,19 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+
+
+@{
+    var componentViews = Model.Content.Children(new[] { "pageContent" }).FirstOrDefault();
+
+    if (componentViews != null)
+    {
+        var selection = componentViews.Children.Where(x => x.IsVisible());
+
+        if (selection != null)
+        {
+            foreach (var page in selection)
+            {
+                Html.RenderPartial(page.DocumentTypeAlias, page);
+            }
+        }
+    }
+}

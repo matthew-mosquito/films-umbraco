@@ -1,5 +1,14 @@
 ﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage<ContentModels.HomePage>
 @using ContentModels = Umbraco.Web.PublishedContentModels;
 @{
-	Layout = null;
+	Layout = "BasePage.cshtml";
 }
+
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-md-12">
+            @Html.Partial("~/Views/Partials/Search.cshtml")
+            @Html.Partial("~/Views/Partials/RenderComponents.cshtml")
+        </div>
+    </div>
+</div>
