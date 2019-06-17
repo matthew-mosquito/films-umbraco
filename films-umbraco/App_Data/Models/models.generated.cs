@@ -19,12 +19,12 @@ using Umbraco.ModelsBuilder;
 using Umbraco.ModelsBuilder.Umbraco;
 
 [assembly: PureLiveAssembly]
-[assembly:ModelsBuilderAssembly(PureLive = true, SourceHash = "2f025b4dc550c40f")]
-[assembly:System.Reflection.AssemblyVersion("0.0.0.4")]
+[assembly:ModelsBuilderAssembly(PureLive = true, SourceHash = "2504e6dcf33628de")]
+[assembly:System.Reflection.AssemblyVersion("0.0.0.2")]
 
 namespace Umbraco.Web.PublishedContentModels
 {
-	/// <summary>Films</summary>
+	/// <summary>Film</summary>
 	[PublishedContentModel("film")]
 	public partial class Film : PublishedContentModel
 	{
@@ -50,12 +50,30 @@ namespace Umbraco.Web.PublishedContentModels
 		}
 
 		///<summary>
-		/// Film List: The list of films
+		/// Duration
+		///</summary>
+		[ImplementPropertyType("duration")]
+		public decimal Duration
+		{
+			get { return this.GetPropertyValue<decimal>("duration"); }
+		}
+
+		///<summary>
+		/// Name
 		///</summary>
 		[ImplementPropertyType("filmList")]
-		public IHtmlString FilmList
+		public string FilmList
 		{
-			get { return this.GetPropertyValue<IHtmlString>("filmList"); }
+			get { return this.GetPropertyValue<string>("filmList"); }
+		}
+
+		///<summary>
+		/// Rating
+		///</summary>
+		[ImplementPropertyType("rating")]
+		public int Rating
+		{
+			get { return this.GetPropertyValue<int>("rating"); }
 		}
 	}
 
@@ -117,6 +135,32 @@ namespace Umbraco.Web.PublishedContentModels
 		public bool UmbracoNaviHide
 		{
 			get { return this.GetPropertyValue<bool>("umbracoNaviHide"); }
+		}
+	}
+
+	/// <summary>Film Section</summary>
+	[PublishedContentModel("filmSection")]
+	public partial class FilmSection : PublishedContentModel
+	{
+#pragma warning disable 0109 // new is redundant
+		public new const string ModelTypeAlias = "filmSection";
+		public new const PublishedItemType ModelItemType = PublishedItemType.Content;
+#pragma warning restore 0109
+
+		public FilmSection(IPublishedContent content)
+			: base(content)
+		{ }
+
+#pragma warning disable 0109 // new is redundant
+		public new static PublishedContentType GetModelContentType()
+		{
+			return PublishedContentType.Get(ModelItemType, ModelTypeAlias);
+		}
+#pragma warning restore 0109
+
+		public static PublishedPropertyType GetModelPropertyType<TValue>(Expression<Func<FilmSection, TValue>> selector)
+		{
+			return PublishedContentModelUtility.GetModelPropertyType(GetModelContentType(), selector);
 		}
 	}
 
