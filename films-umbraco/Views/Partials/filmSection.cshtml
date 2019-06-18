@@ -4,17 +4,23 @@
     Layout = null;
 }
 
-<!-- All of the films -->
+<!-- set variables for pagination -->
 @{
-    <!-- set variables for pagination -->
+
+    <!-- How many items per page-->
     var pageSize = 1;
-    var pageRequested = Convert.ToInt32(Request.QueryString["page"]);
+
+    <!-- which page requested, what was the search-->
+    var pageRequested = !string.IsNullOrEmpty(Request.QueryString["page"]) ? Convert.ToInt32(Request.QueryString["page"]) : 1;
+    var query = !string.IsNullOrEmpty(Request.QueryString["query"]) ? Request.QueryString["query"] : "";
+
+    <!-- calculate the number of items to be skipped -->
     var skip = (pageRequested - 1) * pageSize;
+
+    <!-- set numOfPageLinks as a global variable -->
     int numOfPageLinks;
-
     var selection = Model.Content.Site().FirstChild("pageContent").FirstChild("filmSection").Children()
-                    .Where(x => x.IsVisible());
-
+            .Where(x => x.IsVisible());
 }
 
 <!-- Search field and submit button -->
@@ -43,7 +49,7 @@
                 Items = results.Skip(skip).Take(pageSize).ToList()
             };
 
-            numOfPageLinks = (int)Math.Ceiling((float)pagedResult.Items.Count() / (float)pageSize);
+            numOfPageLinks = (int)Math.Ceiling((float)results.Count() / (float)pageSize);
 
             foreach (var result in pagedResult.Items)
             {
@@ -62,14 +68,11 @@
         }
         else
         {
-            var pagedResult = new PagedResult<IPublishedContent>(selection.LongCount(), pageRequested, pageSize)
-            {
-                Items = selection.Skip(skip).Take(pageSize).ToList()
-            };
+            var Items = selection.Skip(skip).Take(pageSize).ToList();
 
             numOfPageLinks = (int)Math.Ceiling((float)selection.Count() / (float)pageSize);
 
-            foreach (var item in pagedResult.Items)
+            foreach (var item in Items)
             {
                 <tr>
                     <td> @item.GetPropertyValue("filmName") </td>
@@ -79,13 +82,11 @@
             }
         }
     </table>
-}
 
-@{
     <ul class="pagination">
         @for (int i = 1; i < numOfPageLinks + 1; i++)
         {
-            <li class="page-item"><a class="page-link" href="/?page=@i">@i</a></li>
+            <li class="page-item"><a class="page-link" href="/?query=@query&page=@i">@i</a></li>
         }
     </ul>
 }
