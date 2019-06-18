@@ -6,11 +6,8 @@
 
 <!-- set variables for pagination -->
 @{
-
-    <!-- How many items per page-->
-    var pageSize = 1;
-
-    <!-- which page requested, what was the search-->
+    <!-- (1) How many items per page, (2) which page requested, (3) what was the search-->
+    var pageSize = !string.IsNullOrEmpty(Request.QueryString["pageSize"]) ? Convert.ToInt32(Request.QueryString["pageSize"]) : 5;
     var pageRequested = !string.IsNullOrEmpty(Request.QueryString["page"]) ? Convert.ToInt32(Request.QueryString["page"]) : 1;
     var query = !string.IsNullOrEmpty(Request.QueryString["query"]) ? Request.QueryString["query"] : "";
 
@@ -30,6 +27,13 @@
         <button class="btn btn-primary">Search</button>
     </form>
 </div>
+
+<!-- Options for number of Items per page -->
+<span>Films per page:</span>
+<a class="btn btn-outline-info" href="/?query=@query&page=@pageRequested&pageSize=5">5</a>
+<a class="btn btn-outline-info" href="/?query=@query&page=@pageRequested&pageSize=10">10</a>
+<a class="btn btn-outline-info" href="/?query=@query&page=@pageRequested&pageSize=15">15</a>
+
 
 <!-- Table displaying the results of the search, if there is no search, display all films -->
 @{
