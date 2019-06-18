@@ -6,10 +6,11 @@
 
 <!-- set variables for pagination -->
 @{
-    <!-- (1) How many items per page, (2) which page requested, (3) what was the search-->
+    <!-- (1) How many items per page, (2) which page requested, (3) what was the search, (4) previous or next-->
     var pageSize = !string.IsNullOrEmpty(Request.QueryString["pageSize"]) ? Convert.ToInt32(Request.QueryString["pageSize"]) : 5;
     var pageRequested = !string.IsNullOrEmpty(Request.QueryString["page"]) ? Convert.ToInt32(Request.QueryString["page"]) : 1;
-    var query = !string.IsNullOrEmpty(Request.QueryString["query"]) ? Request.QueryString["query"] : "";
+    var query = Request.QueryString["query"];
+    var sortOrder = Request.QueryString["sortOrder"];
 
     if (!string.IsNullOrEmpty(Request.QueryString["previous"]) && pageRequested > 1)
     {
@@ -33,21 +34,32 @@
 }
 
 <!-- Search field and submit button -->
-<div class="mb-2">
-    <form action="@Model.Content.Url" method="get">
-        <input type="text" class="form-control-sm" placeholder="Search" id="query" name="query" />
-        <button class="btn btn-primary">Search</button>
-    </form>
+<div class="row mb-2 mt-4">
+    <div class="col-md-12">
+        <form action="@Model.Content.Url" method="get">
+            <input type="text" class="form-control-sm" placeholder="Search" id="query" name="query" />
+            <button class="btn btn-primary">Search</button>
+        </form>
+    </div>
 </div>
-<br />
-
 
 <!-- Options for number of Items per page -->
-<span>Items per page: </span>
-<a class="btn btn-outline-info @(pageSize == 5 ? "active" : null)" id="pageSizeLink" href="/?query=@query&page=1&pageSize=5">5</a>
-<a class="btn btn-outline-info @(pageSize == 10 ? "active" : null)" id="pageSizeLink" href="/?query=@query&page=1&pageSize=10">10</a>
-<a class="btn btn-outline-info @(pageSize == 15 ? "active" : null)" id="pageSizeLink" href="/?query=@query&page=1&pageSize=15">15</a>
-<a class="btn btn-outline-info @(pageSize == 20 ? "active" : null)" id="pageSizeLink" href="/?query=@query&page=1&pageSize=20">20</a>
+<div class="row mt-2 mb-2">
+    <div class="col-md-12">
+        Items per page:
+        <a class="btn btn-outline-info @(pageSize == 5 ? "active" : null)" id="pageSizeLink" href="/?query=@query&page=1&pageSize=5">5</a>
+        <a class="btn btn-outline-info @(pageSize == 10 ? "active" : null)" id="pageSizeLink" href="/?query=@query&page=1&pageSize=10">10</a>
+        <a class="btn btn-outline-info @(pageSize == 15 ? "active" : null)" id="pageSizeLink" href="/?query=@query&page=1&pageSize=15">15</a>
+        <a class="btn btn-outline-info @(pageSize == 20 ? "active" : null)" id="pageSizeLink" href="/?query=@query&page=1&pageSize=20">20</a>
+    </div>
+</div>
+
+<div class="row mt-2 mb-2">
+    <div class="col-md-12">
+        <a href="/?query=@query&page=@pageRequested&pageSize=@pageSize&sortOrder=Ascending" class="btn btn-info" role="button">Ascending</a>
+        <a href="/?query=@query&page=@pageRequested&pageSize=@pageSize&sortOrder=Descending" class="btn btn-info" role="button">Descending</a>
+    </div>
+</div>
 
 <!-- Table displaying the results of the search, if there is no search, display all films -->
 @{
@@ -66,6 +78,18 @@
             {
                 Items = results.Skip(skip).Take(pageSize).ToList()
             };
+
+            switch (sortOrder)
+            {
+                case "Ascending":
+                    pagedResult.Items = pagedResult.Items.OrderBy(film => film.Name);
+                    break;
+                case "Descending":
+                    pagedResult.Items = pagedResult.Items.OrderByDescending(film => film.Name);
+                    break;
+                default:
+                    break;
+            }
 
             numOfPageLinks = (int)Math.Ceiling((float)results.Count() / (float)pageSize);
 
@@ -87,6 +111,19 @@
         }
         else
         {
+
+            switch (sortOrder)
+            {
+                case "Ascending":
+                    selection = selection.OrderBy(film => film.GetPropertyValue("filmName"));
+                    break;
+                case "Descending":
+                    selection = selection.OrderByDescending(film => film.GetPropertyValue("filmName"));
+                    break;
+                default:
+                    break;
+            }
+
             var Items = selection.Skip(skip).Take(pageSize).ToList();
 
             numOfPageLinks = (int)Math.Ceiling((float)selection.Count() / (float)pageSize);
@@ -104,18 +141,18 @@
 
     <ul class="pagination">
         <li class="page-item">
-            <a class="page-link" href="/?query=@query&page=@pageRequested&pageSize=@pageSize&previous=true">previous</a>
+            <a class="page-link" href="/?query=@query&page=@pageRequested&pageSize=@pageSize&previous=true&sortOrder=@sortOrder">previous</a>
         </li>
         @for (int i = 1; i < numOfPageLinks + 1; i++)
         {
             <li class="page-item @(pageRequested == i ? "active" : null)">
-                <a class="page-link" href="/?query=@query&page=@i&pageSize=@pageSize">@i</a>
+                <a class="page-link" href="/?query=@query&page=@i&pageSize=@pageSize&sortOrder=@sortOrder">@i</a>
             </li>
         }
         @if (pageRequested != numOfPageLinks)
         {
             <li class="page-item">
-                <a class="page-link" href="/?query=@query&page=@pageRequested&pageSize=@pageSize&next=true">Next</a>
+                <a class="page-link" href="/?query=@query&page=@pageRequested&pageSize=@pageSize&next=true&sortOrder=@sortOrder">Next</a>
             </li>
         }
     </ul>
