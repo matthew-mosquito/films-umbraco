@@ -11,11 +11,23 @@
     var pageRequested = !string.IsNullOrEmpty(Request.QueryString["page"]) ? Convert.ToInt32(Request.QueryString["page"]) : 1;
     var query = !string.IsNullOrEmpty(Request.QueryString["query"]) ? Request.QueryString["query"] : "";
 
+    if (!string.IsNullOrEmpty(Request.QueryString["previous"]) && pageRequested > 1)
+    {
+        pageRequested -= 1;
+    }
+
+    if (Convert.ToBoolean(Request.QueryString["next"]))
+    {
+        pageRequested += 1;
+    }
+
     <!-- calculate the number of items to be skipped -->
     var skip = (pageRequested - 1) * pageSize;
 
     <!-- set numOfPageLinks as a global variable -->
     int numOfPageLinks;
+
+    <!-- Get all of the films available to search against -->
     var selection = Model.Content.Site().FirstChild("pageContent").FirstChild("filmSection").Children()
             .Where(x => x.IsVisible());
 }
@@ -27,13 +39,15 @@
         <button class="btn btn-primary">Search</button>
     </form>
 </div>
+<br />
+
 
 <!-- Options for number of Items per page -->
-<span>Films per page:</span>
-<a class="btn btn-outline-info" href="/?query=@query&page=@pageRequested&pageSize=5">5</a>
-<a class="btn btn-outline-info" href="/?query=@query&page=@pageRequested&pageSize=10">10</a>
-<a class="btn btn-outline-info" href="/?query=@query&page=@pageRequested&pageSize=15">15</a>
-
+<span>Items per page: </span>
+<a class="btn btn-outline-info @(pageSize == 5 ? "active" : null)" id="pageSizeLink" href="/?query=@query&page=1&pageSize=5">5</a>
+<a class="btn btn-outline-info @(pageSize == 10 ? "active" : null)" id="pageSizeLink" href="/?query=@query&page=1&pageSize=10">10</a>
+<a class="btn btn-outline-info @(pageSize == 15 ? "active" : null)" id="pageSizeLink" href="/?query=@query&page=1&pageSize=15">15</a>
+<a class="btn btn-outline-info @(pageSize == 20 ? "active" : null)" id="pageSizeLink" href="/?query=@query&page=1&pageSize=20">20</a>
 
 <!-- Table displaying the results of the search, if there is no search, display all films -->
 @{
@@ -55,6 +69,7 @@
 
             numOfPageLinks = (int)Math.Ceiling((float)results.Count() / (float)pageSize);
 
+            <!-- nested foreach loop to ensure only films are returned from the search -->
             foreach (var result in pagedResult.Items)
             {
                 foreach (var item in selection)
@@ -88,9 +103,20 @@
     </table>
 
     <ul class="pagination">
+        <li class="page-item">
+            <a class="page-link" href="/?query=@query&page=@pageRequested&pageSize=@pageSize&previous=true">previous</a>
+        </li>
         @for (int i = 1; i < numOfPageLinks + 1; i++)
         {
-            <li class="page-item"><a class="page-link" href="/?query=@query&page=@i">@i</a></li>
+            <li class="page-item @(pageRequested == i ? "active" : null)">
+                <a class="page-link" href="/?query=@query&page=@i&pageSize=@pageSize">@i</a>
+            </li>
+        }
+        @if (pageRequested != numOfPageLinks)
+        {
+            <li class="page-item">
+                <a class="page-link" href="/?query=@query&page=@pageRequested&pageSize=@pageSize&next=true">Next</a>
+            </li>
         }
     </ul>
 }
