@@ -68,102 +68,102 @@
 
 <!-- Table displaying the results of the search, if there is no search, display all films -->
 @{
-<table class="table mt-2">
-    <tr>
-        <th>Name</th>
-        <th>Rating</th>
-        <th>Duration</th>
-    </tr>
+    <table class="table mt-2">
+        <tr>
+            <th>Name</th>
+            <th>Rating</th>
+            <th>Duration</th>
+        </tr>
 
-    @if (!string.IsNullOrEmpty(Request.QueryString["query"]))
-    {
-        var results = Umbraco.TypedSearch(Request.QueryString["query"]);
-        var films = results.Skip(skip).Take(pageSize);
-
-        switch (sortOrder)
+        @if (!string.IsNullOrEmpty(Request.QueryString["query"]))
         {
-            case "Ascending":
-                results = results.OrderBy(film => film.GetPropertyValue("filmName")).ToList();
-                break;
-            case "Descending":
-                results = results.OrderByDescending(film => film.GetPropertyValue("filmName"));
-                break;
-            case "dateNewest":
-                results = results.OrderByDescending(film => film.CreateDate);
-                break;
-            case "dateOldest":
-                results = results.OrderBy(film => film.CreateDate);
-                break;
-            case "rating":
-                results = results.OrderByDescending(film => film.GetPropertyValue("rating"));
-                break;
-            case "duration":
-                results = results.OrderByDescending(film => film.GetPropertyValue("duration"));
-                break;
-            default:
-                break;
-        }
+            var results = Umbraco.TypedSearch(Request.QueryString["query"]);
+            var films = results.Skip(skip).Take(pageSize);
 
-        var x = (float)results.Count();
-        var y = (float)pageSize;
-        numOfPageLinks = (int)Math.Ceiling((float)results.Count() / (float)pageSize);
-
-        <!-- nested foreach loop to ensure only films are returned from the search -->
-        foreach (var film in films)
-        {
-            foreach (var item in selection)
+            switch (sortOrder)
             {
-                if (film.Name == item.Name)
+                case "Ascending":
+                    results = results.OrderBy(film => film.GetPropertyValue("filmName")).ToList();
+                    break;
+                case "Descending":
+                    results = results.OrderByDescending(film => film.GetPropertyValue("filmName"));
+                    break;
+                case "dateNewest":
+                    results = results.OrderByDescending(film => film.CreateDate);
+                    break;
+                case "dateOldest":
+                    results = results.OrderBy(film => film.CreateDate);
+                    break;
+                case "rating":
+                    results = results.OrderByDescending(film => film.GetPropertyValue("rating"));
+                    break;
+                case "duration":
+                    results = results.OrderByDescending(film => film.GetPropertyValue("duration"));
+                    break;
+                default:
+                    break;
+            }
+
+            var x = (float)results.Count();
+            var y = (float)pageSize;
+            numOfPageLinks = (int)Math.Ceiling((float)results.Count() / (float)pageSize);
+
+            <!-- nested foreach loop to ensure only films are returned from the search -->
+            foreach (var film in films)
+            {
+                foreach (var item in selection)
                 {
-                    <tr>
-                        <td>@item.GetPropertyValue("filmName")</td>
-                        <td>@item.GetPropertyValue("rating")</td>
-                        <td>@item.GetPropertyValue("duration")</td>
-                    </tr>
+                    if (film.Name == item.Name)
+                    {
+                        <tr>
+                            <td>@item.GetPropertyValue("filmName")</td>
+                            <td>@item.GetPropertyValue("rating")</td>
+                            <td>@item.GetPropertyValue("duration")</td>
+                        </tr>
+                    }
                 }
             }
         }
-    }
-    else
-    {
-        switch (sortOrder)
+        else
         {
-            case "Ascending":
-                selection = selection.OrderBy(film => film.GetPropertyValue("filmName"));
-                break;
-            case "Descending":
-                selection = selection.OrderByDescending(film => film.GetPropertyValue("filmName"));
-                break;
-            case "dateNewest":
-                selection = selection.OrderByDescending(film => film.CreateDate);
-                break;
-            case "dateOldest":
-                selection = selection.OrderBy(film => film.CreateDate);
-                break;
-            case "rating":
-                selection = selection.OrderByDescending(film => film.GetPropertyValue("rating"));
-                break;
-            case "duration":
-                selection = selection.OrderByDescending(film => film.GetPropertyValue("duration"));
-                break;
-            default:
-                break;
+            switch (sortOrder)
+            {
+                case "Ascending":
+                    selection = selection.OrderBy(film => film.GetPropertyValue("filmName"));
+                    break;
+                case "Descending":
+                    selection = selection.OrderByDescending(film => film.GetPropertyValue("filmName"));
+                    break;
+                case "dateNewest":
+                    selection = selection.OrderByDescending(film => film.CreateDate);
+                    break;
+                case "dateOldest":
+                    selection = selection.OrderBy(film => film.CreateDate);
+                    break;
+                case "rating":
+                    selection = selection.OrderByDescending(film => film.GetPropertyValue("rating"));
+                    break;
+                case "duration":
+                    selection = selection.OrderByDescending(film => film.GetPropertyValue("duration"));
+                    break;
+                default:
+                    break;
+            }
+
+            var Items = selection.Skip(skip).Take(pageSize).ToList();
+
+            numOfPageLinks = (int)Math.Ceiling((float)selection.Count() / (float)pageSize);
+
+            foreach (var item in Items)
+            {
+                <tr>
+                    <td> @item.GetPropertyValue("filmName") </td>
+                    <td> @item.GetPropertyValue("rating") </td>
+                    <td> @item.GetPropertyValue("duration") </td>
+                </tr>
+            }
         }
-
-        var Items = selection.Skip(skip).Take(pageSize).ToList();
-
-        numOfPageLinks = (int)Math.Ceiling((float)selection.Count() / (float)pageSize);
-
-        foreach (var item in Items)
-        {
-            <tr>
-                <td> @item.GetPropertyValue("filmName") </td>
-                <td> @item.GetPropertyValue("rating") </td>
-                <td> @item.GetPropertyValue("duration") </td>
-            </tr>
-        }
-    }
-</table>
+    </table>
 
     <ul class="pagination">
         <li class="page-item">
