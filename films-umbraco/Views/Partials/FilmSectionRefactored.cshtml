@@ -78,44 +78,42 @@
         @if (!string.IsNullOrEmpty(Request.QueryString["query"]))
         {
             var results = Umbraco.TypedSearch(Request.QueryString["query"]);
-
-            var pagedResult = new PagedResult<IPublishedContent>(results.LongCount(), pageRequested, pageSize)
-            {
-                Items = results.Skip(skip).Take(pageSize).ToList()
-            };
+            var films = results.Skip(skip).Take(pageSize);
 
             switch (sortOrder)
             {
                 case "Ascending":
-                    pagedResult.Items = pagedResult.Items.OrderBy(film => film.GetPropertyValue("filmName"));
+                    films = films.OrderBy(film => film.GetPropertyValue("filmName")).ToList();
                     break;
                 case "Descending":
-                    pagedResult.Items = pagedResult.Items.OrderByDescending(film => film.GetPropertyValue("filmName"));
+                    films = films.OrderByDescending(film => film.GetPropertyValue("filmName"));
                     break;
                 case "dateNewest":
-                    pagedResult.Items = pagedResult.Items.OrderByDescending(film => film.CreateDate);
+                    films = films.OrderByDescending(film => film.CreateDate);
                     break;
                 case "dateOldest":
-                    pagedResult.Items = pagedResult.Items.OrderBy(film => film.CreateDate);
+                    films = films.OrderBy(film => film.CreateDate);
                     break;
                 case "rating":
-                    pagedResult.Items = pagedResult.Items.OrderByDescending(film => film.GetPropertyValue("rating"));
+                    films = films.OrderByDescending(film => film.GetPropertyValue("rating"));
                     break;
                 case "duration":
-                    pagedResult.Items = pagedResult.Items.OrderByDescending(film => film.GetPropertyValue("duration"));
+                    films = films.OrderByDescending(film => film.GetPropertyValue("duration"));
                     break;
                 default:
                     break;
             }
 
+            var x = (float)results.Count();
+            var y = (float)pageSize;
             numOfPageLinks = (int)Math.Ceiling((float)results.Count() / (float)pageSize);
 
             <!-- nested foreach loop to ensure only films are returned from the search -->
-            foreach (var result in pagedResult.Items)
+            foreach (var film in films)
             {
                 foreach (var item in selection)
                 {
-                    if (result.Name == item.Name)
+                    if (film.Name == item.Name)
                     {
                         <tr>
                             <td>@item.GetPropertyValue("filmName")</td>
