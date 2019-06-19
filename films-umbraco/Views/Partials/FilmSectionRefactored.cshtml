@@ -83,22 +83,22 @@
             switch (sortOrder)
             {
                 case "Ascending":
-                    results = results.OrderBy(film => film.GetPropertyValue("filmName")).ToList();
+                    films = films.OrderBy(film => film.GetPropertyValue("filmName")).ToList();
                     break;
                 case "Descending":
-                    results = results.OrderByDescending(film => film.GetPropertyValue("filmName"));
+                    films = films.OrderByDescending(film => film.GetPropertyValue("filmName"));
                     break;
                 case "dateNewest":
-                    results = results.OrderByDescending(film => film.CreateDate);
+                    films = films.OrderByDescending(film => film.CreateDate);
                     break;
                 case "dateOldest":
-                    results = results.OrderBy(film => film.CreateDate);
+                    films = films.OrderBy(film => film.CreateDate);
                     break;
                 case "rating":
-                    results = results.OrderByDescending(film => film.GetPropertyValue("rating"));
+                    films = films.OrderByDescending(film => film.GetPropertyValue("rating"));
                     break;
                 case "duration":
-                    results = results.OrderByDescending(film => film.GetPropertyValue("duration"));
+                    films = films.OrderByDescending(film => film.GetPropertyValue("duration"));
                     break;
                 default:
                     break;

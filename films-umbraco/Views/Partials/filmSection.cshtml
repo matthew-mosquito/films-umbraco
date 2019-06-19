@@ -1,28 +1,17 @@
 ﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
-@using umbraco.cms.businesslogic.Tags
-@{
-    Layout = null;
-}
 
 <!-- set variables for pagination -->
 @{
-    <!-- (1) How many items per page, (2) which page requested, (3) what was the search, (4) previous or next-->
+    <!-- (1) How many items per page, (2) which page requested, (3) what was the search query, (4) previous or next requested?-->
     var pageSize = !string.IsNullOrEmpty(Request.QueryString["pageSize"]) ? Convert.ToInt32(Request.QueryString["pageSize"]) : 5;
     var pageRequested = !string.IsNullOrEmpty(Request.QueryString["page"]) ? Convert.ToInt32(Request.QueryString["page"]) : 1;
     var query = Request.QueryString["query"];
     var sortOrder = Request.QueryString["sortOrder"];
+    <!-- Change the requested page if User pressed previous or next button -->
+    pageRequested = !string.IsNullOrEmpty(Request.QueryString["previous"]) && pageRequested > 1 ? pageRequested -= 1 : pageRequested;
+    pageRequested = Convert.ToBoolean(Request.QueryString["next"]) ? pageRequested += 1 : pageRequested;
 
-    if (!string.IsNullOrEmpty(Request.QueryString["previous"]) && pageRequested > 1)
-    {
-        pageRequested -= 1;
-    }
-
-    if (Convert.ToBoolean(Request.QueryString["next"]))
-    {
-        pageRequested += 1;
-    }
-
-    <!-- calculate the number of films to be skipped -->
+    <!-- calculate the number of films to be skipped based on page requested and size of pages -->
     var skip = (pageRequested - 1) * pageSize;
 
     <!-- set numOfPageLinks as a global variable -->
@@ -83,22 +72,22 @@
         switch (sortOrder)
         {
             case "Ascending":
-                results = results.OrderBy(film => film.GetPropertyValue("filmName")).ToList();
+                films = films.OrderBy(film => film.GetPropertyValue("filmName")).ToList();
                 break;
             case "Descending":
-                results = results.OrderByDescending(film => film.GetPropertyValue("filmName"));
+                films = films.OrderByDescending(film => film.GetPropertyValue("filmName"));
                 break;
             case "dateNewest":
-                results = results.OrderByDescending(film => film.CreateDate);
+                films = films.OrderByDescending(film => film.CreateDate);
                 break;
             case "dateOldest":
-                results = results.OrderBy(film => film.CreateDate);
+                films = films.OrderBy(film => film.CreateDate);
                 break;
             case "rating":
-                results = results.OrderByDescending(film => film.GetPropertyValue("rating"));
+                films = films.OrderByDescending(film => film.GetPropertyValue("rating"));
                 break;
             case "duration":
-                results = results.OrderByDescending(film => film.GetPropertyValue("duration"));
+                films = films.OrderByDescending(film => film.GetPropertyValue("duration"));
                 break;
             default:
                 break;
