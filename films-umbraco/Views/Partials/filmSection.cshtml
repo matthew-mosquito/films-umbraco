@@ -7,6 +7,7 @@
     var pageRequested = !string.IsNullOrEmpty(Request.QueryString["page"]) ? Convert.ToInt32(Request.QueryString["page"]) : 1;
     var query = Request.QueryString["query"];
     var sortOrder = Request.QueryString["sortOrder"];
+
     <!-- Change the requested page if User pressed previous or next button -->
     pageRequested = !string.IsNullOrEmpty(Request.QueryString["previous"]) && pageRequested > 1 ? pageRequested -= 1 : pageRequested;
     pageRequested = Convert.ToBoolean(Request.QueryString["next"]) ? pageRequested += 1 : pageRequested;
@@ -90,37 +91,39 @@
 <!-- Sort by options-->
 <div class="row mt-2 mb-2">
     <div class="col-md-12">
-        <a href="/?query=@query&page=@pageRequested&pageSize=@pageSize&sortOrder=Ascending" class="btn btn-info" role="button">Alphabet</a>
-        <a href="/?query=@query&page=@pageRequested&pageSize=@pageSize&sortOrder=Descending" class="btn btn-info" role="button">Alphabet descending</a>
-        <a href="/?query=@query&page=@pageRequested&pageSize=@pageSize&sortOrder=dateNewest" class="btn btn-info" role="button">Newest</a>
-        <a href="/?query=@query&page=@pageRequested&pageSize=@pageSize&sortOrder=dateOldest" class="btn btn-info" role="button">Oldest</a>
-        <a href="/?query=@query&page=@pageRequested&pageSize=@pageSize&sortOrder=rating" class="btn btn-info" role="button">Rating</a>
-        <a href="/?query=@query&page=@pageRequested&pageSize=@pageSize&sortOrder=duration" class="btn btn-info" role="button">Duration</a>
+        <a href="/?query=@query&page=@pageRequested&pageSize=@pageSize&sortOrder=Ascending" class="btn btn-info m-1" role="button">Alphabet</a>
+        <a href="/?query=@query&page=@pageRequested&pageSize=@pageSize&sortOrder=Descending" class="btn btn-info m-1" role="button">Alphabet descending</a>
+        <a href="/?query=@query&page=@pageRequested&pageSize=@pageSize&sortOrder=dateNewest" class="btn btn-info m-1" role="button">Newest</a>
+        <a href="/?query=@query&page=@pageRequested&pageSize=@pageSize&sortOrder=dateOldest" class="btn btn-info m-1" role="button">Oldest</a>
+        <a href="/?query=@query&page=@pageRequested&pageSize=@pageSize&sortOrder=rating" class="btn btn-info m-1" role="button">Rating</a>
+        <a href="/?query=@query&page=@pageRequested&pageSize=@pageSize&sortOrder=duration" class="btn btn-info m-1" role="button">Duration</a>
     </div>
 </div>
 
 <!-- Table displaying the results -->
 @{
-<table class="table mt-2">
-    <!-- table headers-->
-    <tr>
-        <th>Name</th>
-        <th>Rating</th>
-        <th>Duration (hours)</th>
-    </tr>
-    <!-- table fields -->
-    @foreach (var film in films)
-    {
-        if (film.DocumentTypeAlias == "film")
+    <table class="table mt-2">
+        <!-- table headers-->
+        <tr>
+            <th>Name</th>
+            <th>Rating</th>
+            <th>Duration (hours)</th>
+            <th>Release Date</th>
+        </tr>
+        <!-- table fields -->
+        @foreach (var film in films)
         {
-            <tr>
-                <td>@film.GetPropertyValue("filmName")</td>
-                <td>@film.GetPropertyValue("rating")</td>
-                <td>@film.GetPropertyValue("duration")</td>
-            </tr>
+            if (film.DocumentTypeAlias == "film")
+            {
+                <tr>
+                    <td>@film.GetPropertyValue("filmName")</td>
+                    <td>@film.GetPropertyValue("rating")</td>
+                    <td>@film.GetPropertyValue("duration")</td>
+                    <td>@film.GetPropertyValue("releaseDate")</td>
+                </tr>
+            }
         }
-    }
-</table>
+    </table>
 
     <!-- pagination -->
     <ul class="pagination">

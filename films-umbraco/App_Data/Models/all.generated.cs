@@ -8,8 +8,8 @@ using  Umbraco.Web;
 using  Umbraco.ModelsBuilder;
 using  Umbraco.ModelsBuilder.Umbraco;
 [assembly: PureLiveAssembly]
-[assembly:ModelsBuilderAssembly(PureLive = true, SourceHash = "b2e9a808425f79fe")]
-[assembly:System.Reflection.AssemblyVersion("0.0.0.1")]
+[assembly:ModelsBuilderAssembly(PureLive = true, SourceHash = "80d5b62160659812")]
+[assembly:System.Reflection.AssemblyVersion("0.0.0.4")]
 
 
 // FILE: models.generated.cs
@@ -90,6 +90,15 @@ namespace Umbraco.Web.PublishedContentModels
 		public int Rating
 		{
 			get { return this.GetPropertyValue<int>("rating"); }
+		}
+
+		///<summary>
+		/// releaseDate
+		///</summary>
+		[ImplementPropertyType("releaseDate")]
+		public string ReleaseDate
+		{
+			get { return this.GetPropertyValue<string>("releaseDate"); }
 		}
 	}
 
