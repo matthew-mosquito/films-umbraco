@@ -17,9 +17,53 @@
     <!-- set numOfPageLinks as a global variable -->
     int numOfPageLinks;
 
-    <!-- Get all of the films available -->
-    var selection = Model.Content.Site().FirstChild("pageContent").FirstChild("filmSection").Children()
-            .Where(x => x.IsVisible());
+    <!-- Initialise variables -->
+    IEnumerable<IPublishedContent> selection;
+    IEnumerable<IPublishedContent> films;
+
+    <!-- Get all of the films -->
+    selection = Model.Content.Site().FirstChild("pageContent").FirstChild("filmSection").Children()
+        .Where(x => x.IsVisible());
+
+    <!-- Check for a query string, get search results if there is one-->
+    if (!string.IsNullOrEmpty(query))
+    {
+        selection = Umbraco.TypedSearch(Request.QueryString["query"]);
+
+        films = selection.Skip(skip).Take(pageSize).ToList();
+    }
+    else
+    {
+        films = selection.Skip(skip).Take(pageSize).ToList();
+    }
+
+    <!-- get the number of links to other pages we need-->
+    numOfPageLinks = (int)Math.Ceiling((float)selection.Count() / (float)pageSize);
+
+    <!-- order the results depending on type of sort (e.g alphabet descending vs rating) -->
+    switch (sortOrder)
+    {
+        case "Ascending":
+            films = films.OrderBy(film => film.GetPropertyValue("filmName")).ToList();
+            break;
+        case "Descending":
+            films = films.OrderByDescending(film => film.GetPropertyValue("filmName")).ToList();
+            break;
+        case "dateNewest":
+            films = films.OrderByDescending(film => film.CreateDate).ToList();
+            break;
+        case "dateOldest":
+            films = films.OrderBy(film => film.CreateDate).ToList();
+            break;
+        case "rating":
+            films = films.OrderByDescending(film => film.GetPropertyValue("rating")).ToList();
+            break;
+        case "duration":
+            films = films.OrderByDescending(film => film.GetPropertyValue("duration")).ToList();
+            break;
+        default:
+            break;
+    }
 }
 
 <!-- Search field and submit button -->
@@ -43,7 +87,7 @@
     </div>
 </div>
 
-<!-- sort by options-->
+<!-- Sort by options-->
 <div class="row mt-2 mb-2">
     <div class="col-md-12">
         <a href="/?query=@query&page=@pageRequested&pageSize=@pageSize&sortOrder=Ascending" class="btn btn-info" role="button">Alphabet</a>
@@ -55,105 +99,30 @@
     </div>
 </div>
 
-<!-- Table displaying the results of the search, if there is no search, display all films -->
+<!-- Table displaying the results -->
 @{
 <table class="table mt-2">
+    <!-- table headers-->
     <tr>
         <th>Name</th>
         <th>Rating</th>
         <th>Duration</th>
     </tr>
-
-    @if (!string.IsNullOrEmpty(Request.QueryString["query"]))
+    <!-- table fields -->
+    @foreach (var film in films)
     {
-        var results = Umbraco.TypedSearch(Request.QueryString["query"]);
-        var films = results.Skip(skip).Take(pageSize);
-
-        switch (sortOrder)
-        {
-            case "Ascending":
-                films = films.OrderBy(film => film.GetPropertyValue("filmName")).ToList();
-                break;
-            case "Descending":
-                films = films.OrderByDescending(film => film.GetPropertyValue("filmName"));
-                break;
-            case "dateNewest":
-                films = films.OrderByDescending(film => film.CreateDate);
-                break;
-            case "dateOldest":
-                films = films.OrderBy(film => film.CreateDate);
-                break;
-            case "rating":
-                films = films.OrderByDescending(film => film.GetPropertyValue("rating"));
-                break;
-            case "duration":
-                films = films.OrderByDescending(film => film.GetPropertyValue("duration"));
-                break;
-            default:
-                break;
-        }
-
-        var x = (float)results.Count();
-        var y = (float)pageSize;
-        numOfPageLinks = (int)Math.Ceiling((float)results.Count() / (float)pageSize);
-
-        <!-- nested foreach loop to ensure only films are returned from the search -->
-        foreach (var film in films)
-        {
-            foreach (var item in selection)
-            {
-                if (film.Name == item.Name)
-                {
-                    <tr>
-                        <td>@item.GetPropertyValue("filmName")</td>
-                        <td>@item.GetPropertyValue("rating")</td>
-                        <td>@item.GetPropertyValue("duration")</td>
-                    </tr>
-                }
-            }
-        }
-    }
-    else
-    {
-        switch (sortOrder)
-        {
-            case "Ascending":
-                selection = selection.OrderBy(film => film.GetPropertyValue("filmName"));
-                break;
-            case "Descending":
-                selection = selection.OrderByDescending(film => film.GetPropertyValue("filmName"));
-                break;
-            case "dateNewest":
-                selection = selection.OrderByDescending(film => film.CreateDate);
-                break;
-            case "dateOldest":
-                selection = selection.OrderBy(film => film.CreateDate);
-                break;
-            case "rating":
-                selection = selection.OrderByDescending(film => film.GetPropertyValue("rating"));
-                break;
-            case "duration":
-                selection = selection.OrderByDescending(film => film.GetPropertyValue("duration"));
-                break;
-            default:
-                break;
-        }
-
-        var Items = selection.Skip(skip).Take(pageSize).ToList();
-
-        numOfPageLinks = (int)Math.Ceiling((float)selection.Count() / (float)pageSize);
-
-        foreach (var item in Items)
+        if (film.DocumentTypeAlias == "film")
         {
             <tr>
-                <td> @item.GetPropertyValue("filmName") </td>
-                <td> @item.GetPropertyValue("rating") </td>
-                <td> @item.GetPropertyValue("duration") </td>
+                <td>@film.GetPropertyValue("filmName")</td>
+                <td>@film.GetPropertyValue("rating")</td>
+                <td>@film.GetPropertyValue("duration")</td>
             </tr>
         }
     }
 </table>
 
+    <!-- pagination -->
     <ul class="pagination">
         <li class="page-item">
             <a class="page-link" href="/?query=@query&page=@pageRequested&pageSize=@pageSize&previous=true&sortOrder=@sortOrder">previous</a>
